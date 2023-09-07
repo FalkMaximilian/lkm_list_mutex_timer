@@ -287,12 +287,16 @@ static void __exit ModuleExit(void) {
     struct list_head *ptr, *next;
     struct word_struct *entry;
 
+    mutex_lock(&list_lock);
     list_for_each_safe(ptr, next, &word_list) {
         entry = list_entry(ptr, struct word_struct, list);
         kfree(entry->word);
         list_del(ptr);
         kfree(entry);
     }
+    mutex_unlock(&list_lock);
+
+    mutex_destroy(&list_lock);
 
     printk("Goodbye, Kernel!\n");
 }
